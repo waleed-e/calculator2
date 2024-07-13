@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    /* CSS Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .calculator {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    .display {
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 24px;
+      padding: 10px;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+    }
+
+    .buttons button {
+      background-color: #f2f2f2;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #e6e6e6;
+    }
+
+    .buttons button.active {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+
+    @media (max-width: 480px) {
+      .calculator {
+        padding: 10px;
+      }
+
+      .display {
+        font-size: 20px;
+        padding: 8px;
+      }
+
+      .buttons button {
+        font-size: 16px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="number">7</button>
+      <button class="number">8</button>
+      <button class="number">9</button>
+      <button class="operation">/</button>
+      <button class="number">4</button>
+      <button class="number">5</button>
+      <button class="number">6</button>
+      <button class="operation">*</button>
+      <button class="number">1</button>
+      <button class="number">2</button>
+      <button class="number">3</button>
+      <button class="operation">-</button>
+      <button class="clear">C</button>
+      <button class="number">0</button>
+      <button class="equals">=</button>
+      <button class="operation">+</button>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript Functionality
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('button');
+    let currentValue = '0';
+    let operation = null;
+    let previousValue = null;
+
+    function updateDisplay() {
+      display.textContent = currentValue;
+    }
+
+    function handleNumber(value) {
+      if (currentValue === '0') {
+        currentValue = value;
+      } else {
+        currentValue += value;
+      }
+      updateDisplay();
+    }
+
+    function handleOperation(op) {
+      if (previousValue !== null) {
+        performOperation();
+      }
+      operation = op;
+      previousValue = parseFloat(currentValue);
+      currentValue = '0';
+    }
+
+    function performOperation() {
+      let result;
+      const current = parseFloat(currentValue);
+      const previous = previousValue;
+
+      switch (operation) {
+        case '+':
+          result = previous + current;
+          break;
+        case '-':
+          result = previous - current;
+          break;
+        case '*':
+          result = previous * current;
+          break;
+        case '/':
+          if (current === 0) {
+            display.textContent = 'Error: Division by zero';
+            return;
+          }
+          result = previous / current;
+          break;
+        default:
+          return;
+      }
+
+      currentValue = result.toString();
+      previousValue = null;
+      operation = null;
+      updateDisplay();
+    }
+
+    function handleClear() {
+      currentValue = '0';
+      previousValue = null;
+      operation = null;
+      updateDisplay();
+    }
+
+    function handleEquals() {
+      if (previousValue !== null) {
+        performOperation();
+      }
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const className = button.className;
+        if (className.includes('number')) {
+          handleNumber(button.textContent);
+        } else if (className.includes('operation')) {
+          handleOperation(button.textContent);
+        } else if (className.includes('clear')) {
+          handleClear();
+        } else if (className.includes('equals')) {
+          handleEquals();
+        }
+
+        // Add active class to the clicked button
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
